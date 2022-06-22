@@ -1,0 +1,97 @@
+.neon {
+  text-shadow: 0 0 5px #fff700;
+}
+
+.ln-text {
+  margin-right: 3px;
+  margin-left: 3px;
+}
+
+/* Bitcoin LN Logo Styles*/
+@font-face {
+  font-family: 'Bitcoin-Lightning-Logo';
+  src: url('../../Assets/Fonts/Bitcoin-Lightning-Logo.eot');
+  src: url('../../Assets/Fonts/Bitcoin-Lightning-Logo.eot') format('embedded-opentype'), url('../../Assets/Fonts/Bitcoin-Lightning-Logo.ttf') format('truetype'), url('../../Assets/Fonts/Bitcoin-Lightning-Logo.woff') format('woff'), url('../../Assets/Fonts/Bitcoin-Lightning-Logo.svg?#Bitcoin-Lightning-Logo') format('svg');
+  font-weight: normal;
+  font-style: normal;
+  font-display: block;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  font-family: 'Bitcoin-Lightning-Logo' !important;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-xs {
+  font-size: .75em;
+}
+
+.icon-sm {
+  font-size: .875em;
+}
+
+.icon-lg {
+  font-size: 1.33333em;
+  line-height: .75em;
+  vertical-align: -.0667em;
+}
+
+.icon-2x {
+  font-size: 2em;
+}
+
+.icon-3x {
+  font-size: 3em;
+}
+
+.icon-5x {
+  font-size: 5em;
+}
+
+.icon-7x {
+  font-size: 7em;
+}
+
+.icon-Bitcoin-Lightning-Gold:before {
+  content: "\e900";
+  color: #f2a900;
+}
+
+.icon-Bitcoin-Lightning-Gray:before {
+  content: "\e900";
+  color: #6c757d;
+}
+
+.icon-Bitcoin-Lightning-White:before {
+  content: "\e900";
+  color: white;
+}
+
+.icon-Bitcoin-Lightning-White-Gold-Rounded:before {
+  border-radius: 50% !important;
+  padding: .5rem !important;
+  content: "\e900";
+  color: #f2a900;
+  background-color: white;
+}
+
+.icon-Bitcoin-Lightning-Gold-White-Rounded:before {
+  border-radius: 50% !important;
+  padding: .5rem !important;
+  content: "\e900";
+  color: white;
+  background-color: #f2a900;
+}
+
+.icon-Bitcoin-Lightning-Gray-White-Rounded:before {
+  border-radius: 50% !important;
+  padding: .5rem !important;
+  content: "\e900";
+  color: white;
+  background-color: #6c757d;
+}
