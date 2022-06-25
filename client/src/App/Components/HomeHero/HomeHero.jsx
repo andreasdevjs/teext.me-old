@@ -19,7 +19,7 @@ function HomeHero() {
         </Heading>
         
         <Link as={ReachLink} to='/register' style={{textDecoration: 'none'}}>
-          <Button size='lg' backgroundColor='#f2a900' textShadow='0px 0px 10px #00000080' _hover={{ bg: '#f2a900' }} fontFamily='GilroySemiBold'>
+          <Button size='lg' backgroundColor='#f2a900' _hover={{ bg: '#f2a900' }} fontFamily='GilroySemiBold'>
             Create account
           </Button>
         </Link>
