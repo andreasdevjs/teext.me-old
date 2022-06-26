@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 // TODO: PONER EN VARIABLE DE ENTORNO
-const db = 'mongodb+srv://aln28UopLkJUUUf:XzoaEOfbIfp8uqpe@teextmecluster0.oxpq3.mongodb.net/teextme?retryWrites=true&w=majority'
+const db = 'mongodb+srv://teextmeadminuser:837sbhH7A7S7S7SYyaggazz4@teextmeproductioncluste.dqzlaxp.mongodb.net/?retryWrites=true&w=majority';
 
 const connectDB = async () => {
   try {
@@ -10,7 +10,8 @@ const connectDB = async () => {
       useUnifiedTopology: true
     });
 
-    console.log('MongoDB Connected...');
+    console.log('Teextme MongoDB Connected...');
+    
   } catch (err) {
     console.error(err.message);
     // Exit process with failure
