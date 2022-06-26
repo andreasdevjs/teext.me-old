@@ -8,13 +8,13 @@ import './Home.css';
 
 const Home = () => {
   return (
-    <React.Fragment>
+    <>
       <div className="home-full-screen-section">
         <FloatingLightningButton />
         <Stars />
         <HomeHero />
       </div>
-    </React.Fragment>
+    </>
   );
 }
 

@@ -42,7 +42,7 @@ const RegisterForm = () => {
           <FormHelperText>Your best password</FormHelperText>
         </FormControl>
 
-        <Button mt={4} width='100%' size='lg' backgroundColor='#f2a900' color='white' textShadow='0px 0px 10px #00000080' _hover={{ bg: '#f2a900' }} fontFamily='GilroySemiBold'>
+        <Button mt={4} width='100%' size='lg' backgroundColor='#f2a900' color='white' _hover={{ bg: '#f2a900' }} fontFamily='GilroySemiBold'>
           Create account
         </Button>
 
