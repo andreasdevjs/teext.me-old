@@ -4,13 +4,15 @@ import { Box, Heading, Kbd } from '@chakra-ui/react';
 import './Register.css';
 import RegisterForm from '../../Components/RegisterForm/RegisterForm';
 import FloatingLightningButton from '../../Components/FloatingLightningButton/FloatingLightningButton';
+import LogoHeader from '../../Components/LogoHeader/LogoHeader';
 
 const Register = () => {
 
   return (
     <React.Fragment>
+      <LogoHeader />
       <Box className='register-page'>
-         <FloatingLightningButton />
+        <FloatingLightningButton />
         <Box>
 
           <Box mb={[5, 10]}>

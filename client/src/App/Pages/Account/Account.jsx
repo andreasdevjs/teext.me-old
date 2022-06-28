@@ -8,7 +8,7 @@ function Account() {
     <>
       <Flex minH={'100vh'} align={'center'} justify={'center'} bg='radial-gradient(ellipse at bottom, #0d1d31 0%, #0c0d13 100%)'>
         <Stack className='pepe' spacing={6} w={'full'} maxW={'md'} bg={'transparent'} rounded={'xl'} boxShadow={'lg'} p={6} >
-          <Heading color={'white'} fontFamily='GilroyBold' lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
+          <Heading className='neon' color={'white'} fontFamily='GilroyBold' lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
             Your settings
           </Heading>
           <FormControl id="email">
