@@ -9,7 +9,6 @@
   -webkit-transition: .5s ease-in-out;
   transition: .5s ease-in-out;
   cursor: pointer;
-  box-shadow: rgb(255, 255, 255) 0px 1px 10px 0px, rgb(255, 255, 255) 0px 1px 10px 1px;
   transform: scale(1);
 	animation: pulse 3s infinite;
 }

@@ -2,7 +2,7 @@ const questions = [
   {
     id: 1,
     question: 'What is teext.me for?',
-    answer: 'Teext.me allows you to share a link on your public profiles so that people can send you messages. People who really want to contact you will have to pass a paywall. This will stop most spam from getting through.'
+    answer: 'Teext.me allows you to share a link on your public profiles so that people can send you messages. People who really want to contact you will have to pass a paywall. This will stop most spam from getting through. And if it happens, at least you earn bitcoin!'
   },
   {
     id: 2,
@@ -37,12 +37,22 @@ const questions = [
   {
     id: 8,
     question: 'Do I have to use the same registration email address to receive the messages?',
-    answer: 'No. You can use any email to register and use another email to receive the messages.'
+    answer: 'No. You can use any email to register and use another email to receive the messages. Of course, if you really want to receive messages you must put an email that you are going to read!'
   },
   {
     id: 9,
     question: 'Are the messages I receive saved?',
     answer: 'No. Teext.me does NOT store the messages that are sent, we simply act as a bridge or paywall between the messenger and the receiver. We store the minimum information necessary for the service to work and to be able to pay the corresponding satoshis.'
+  },
+  {
+    id: 10,
+    question: 'How much does it cost?',
+    answer: 'Registration is completely free. And it always will be.'
+  },
+  {
+    id: 11,
+    question: 'How does the platform make money?',
+    answer: 'Transparency is one of our values. The platform earns 10% of the amount of the payments. If your message costs 3000 sats, we will charge 3300 sats to the user.'
   }
 ];
 
