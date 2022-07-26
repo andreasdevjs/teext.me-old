@@ -1,11 +1,8 @@
 const mongoose = require('mongoose');
 
-// TODO: PONER EN VARIABLE DE ENTORNO
-const db = 'mongodb+srv://teextmeadminuser:837sbhH7A7S7S7SYyaggazz4@teextmeproductioncluste.dqzlaxp.mongodb.net/?retryWrites=true&w=majority';
-
 const connectDB = async () => {
   try {
-    await mongoose.connect(db, {
+    await mongoose.connect(process.env.MONGO_DB_PRODUCTION_URL, {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });

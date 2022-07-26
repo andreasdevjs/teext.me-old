@@ -15,22 +15,24 @@ router.post('/', async (req, res) => {
   try {
 
     // Paso 1: compruebo si hay un user con ese username, si hay, obtengo el ID
-    const user = await User.findOne({
-      username: username
-    });
+    const user = await User.findOne({ username: username });
 
     if (!user) {
       return res.status(400).json({ msg: 'Sorry, there is no user with this username' });
     }
 
-    const { id, lightning_invoice: { payreq }, status  } = await createCharge(user.satoshisPerMessage);
+    const { id, lightning_invoice: { payreq }, status, amount, fiat_value, uri } = await createCharge(user.satoshisPerMessage);
 
     const newTransaction = new Transaction({
       receiver: user._id,
       paymentId: id,
       paymentUrl: payreq,
       message: message,
-      paid: status
+      paid: status,
+      amount: amount,
+      fiatValue: fiat_value,
+      uri: uri,
+      qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(uri)}&size=[500]x[500]`
     });
 
     const transaction = await newTransaction.save();
@@ -49,6 +51,29 @@ router.post('/', async (req, res) => {
   // Paso 5: se crea una nueva instancia de transaction.
 
   // Paso 6: se envía al cliente un json con la url de pago para que pueda pagar
+
+});
+
+
+// @route    GET api/transactions/:transactionId
+// @desc     Get transaction data by id
+// @access   Public
+router.get('/:transactionId', async (req, res) => {
+
+  const { transactionId } = req.params;
+
+  try {
+    let transaction = await Transaction.findById(transactionId);
+
+    if (transaction) {
+      res.status(200).json({ status: 200, data: { transaction } });
+    } else {
+      throw new Error('Payment not found');
+    }
+
+  } catch (err) {
+    res.status(500).json({ status: 500, error: { msg: err.message } });
+  }
 
 });
 

@@ -11,20 +11,21 @@ const User = require('../../models/User');
 // @desc     Get user by username
 // @access   Public
 router.get('/:username', async (req, res) => {
+
   try {
     const user = await User.findOne({ username: req.params.username });
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(400).json({ status: 400, error: { msg: 'User not found' } });
     }
 
-    // TODO: esto muestra el teext.me/username , habría que obtener la cantidad de satoshis o no mandarlo.
-    res.json(user);
+    res.status(200).json({ status: 200, data: { user } });
+
   } catch (err) {
     console.error(err.message);
-
-    res.status(500).send('Server Error');
+    res.status(500).json({ status: 500, error: { msg: err.message } });
   }
+  
 });
 
 
@@ -33,23 +34,19 @@ router.get('/:username', async (req, res) => {
 // @access   Public
 router.post('/', async (req, res) => {
     
-  const { username, email, password, emailForMessages, satoshisPerMessage } = req.body;
+  const { username, email, password } = req.body;
 
   try {
     let user = await User.findOne({ email });
 
     if (user) {
-      return res
-      .status(400)
-      .json({ errors: [{ msg: 'User already exists' }] });
+      return res.status(400).json({ status: 400, error: { msg: 'User already exists' } });
     }
 
     user = new User({
       username,
       email,
-      password,
-      emailForMessages: emailForMessages ? emailForMessages : email,
-      satoshisPerMessage
+      password
     });
 
     const salt = await bcrypt.genSalt(10);
@@ -65,13 +62,13 @@ router.post('/', async (req, res) => {
 
     jwt.sign( payload, secret, { expiresIn: '30 days' }, (err, token) => {
       if (err) throw err;
-        res.json({ token });
+        res.status(200).json({ status: 200, data: { token } });
       }
     );
 
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ status: 500, error: { msg: err.message } });
   }
   
 });

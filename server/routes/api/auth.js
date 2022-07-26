@@ -18,13 +18,13 @@ router.post('/', async (req, res) => {
       let user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
+        return res.status(404).json({ status: 404, error: { msg: 'User not found' } });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return res.status(400).json({ errors: [{ msg: 'Invalid Credentials' }] });
+        return res.status(400).json({ status: 400, error: { msg: 'Invalid Credentials' } });
       }
 
       const payload = {
@@ -33,19 +33,14 @@ router.post('/', async (req, res) => {
         }
       };
 
-      jwt.sign(
-        payload,
-        secret,
-        { expiresIn: '30 days' },
-        (err, token) => {
-          if (err) throw err;
-          res.json({ token });
-        }
-      );
+      jwt.sign(payload, secret, { expiresIn: '30 days' }, (err, token) => {
+        if (err) throw err;
+        res.status(200).json({ status: 200, data: { token } });
+      });
       
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      res.status(500).json({ status: 500, error: { msg: err.message } });
     }
   }
 );

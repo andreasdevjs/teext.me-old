@@ -18,7 +18,9 @@
   },
   "keywords": [
     "bitcoin",
-    "lightning"
+    "lightning",
+    "ln",
+    "btc"
   ],
   "author": "AndreasDevJs",
   "license": "ISC",

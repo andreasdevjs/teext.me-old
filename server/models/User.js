@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: true
+    required: true,
+    maxLength: 25
   },
   email: {
     type: String,
@@ -21,8 +22,22 @@ const UserSchema = new mongoose.Schema({
     type: Number,
     default: 1000
   },
+  phoneNumber: {
+    type: String
+  },
   isActive: {
     type: Boolean
+  },
+  hasMadeAnyWithdrawal: {
+    type: Boolean,
+    default: false
+  },
+  hasReceivedAnyMessage: {
+    type: Boolean,
+    default: false
+  },
+  location: {
+    type: String
   }
 });
 

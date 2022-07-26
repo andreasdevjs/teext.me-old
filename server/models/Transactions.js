@@ -20,6 +20,18 @@ const TransactionSchema = new mongoose.Schema({
   paid: { // estado de la transacción: unpaid | paid
     type: String,
     required: true
+  }, 
+  amount: { // cantidad a pagar
+    type: Number
+  },
+  fiatValue: {
+    type: String
+  },
+  uri: {
+    type: String
+  },
+  qrImageUrl: {
+    type: String
   }
 });
 
