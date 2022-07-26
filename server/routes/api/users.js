@@ -19,7 +19,7 @@ router.get('/:username', async (req, res) => {
       return res.status(400).json({ status: 400, error: { msg: 'User not found' } });
     }
 
-    res.status(200).json({ status: 200, data: { user } });
+    res.status(200).json({ status: 200, data: { username: user.username, messagePrice: user.satoshisPerMessage } });
 
   } catch (err) {
     console.error(err.message);
