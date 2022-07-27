@@ -9,7 +9,7 @@ const TransactionSchema = new mongoose.Schema({
   paymentId: { // id del pago creado con opennode
     type: String 
   },
-  paymentUrl: { // url de pago creada por opennode
+  paymentUrl: { // url de pago LN creada por opennode
     type: String,
     required: true
   },
@@ -24,13 +24,13 @@ const TransactionSchema = new mongoose.Schema({
   amount: { // cantidad a pagar
     type: Number
   },
-  fiatValue: {
+  fiatValue: { // cantidad a pagar en dólares
     type: String
   },
-  uri: {
+  uri: { // url de bitcoin
     type: String
   },
-  qrImageUrl: {
+  qrImageUrl: { // url btc on chain QR
     type: String
   }
 });

@@ -68,7 +68,7 @@ router.get('/:transactionId', async (req, res) => {
     if (transaction) {
       res.status(200).json({ status: 200, data: { transaction } });
     } else {
-      throw new Error('Payment not found');
+      throw new Error('Transaction not found');
     }
 
   } catch (err) {
@@ -82,8 +82,9 @@ router.get('/:transactionId', async (req, res) => {
 // @desc     Webhook for transactions from Opennode
 // @access   Public
 router.post('/webhooks', async (req, res) => {
-  console.log(req.body);
+  console.log('Nos envían esto: ', req.body);
 
+  // Obtenemos el ID y estado de la transacción
   const { id, status } = req.body;
 
   const filter = { paymentId: id };
@@ -92,7 +93,9 @@ router.post('/webhooks', async (req, res) => {
   let transactionUpdated = await Transaction.findOneAndUpdate(filter, update);
   await transactionUpdated.save();
 
-  console.log(transactionUpdated);
+  // En este punto la transacción está actualizada y pagada, habría que mandarla a la cola de procesamiento
+  
+
 });
 
 

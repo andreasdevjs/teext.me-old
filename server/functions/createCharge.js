@@ -6,9 +6,9 @@ opennode.setCredentials(productionKey, 'live'); // if no parameter given, defaul
 module.exports = async function(chargeQuantity) {
   try {
     const charge = await opennode.createCharge({
-      amount: chargeQuantity,
+      amount: chargeQuantity + (0.1 * chargeQuantity),
       auto_settle: false,
-      callback_url: 'https://9930-2-136-67-192.ngrok.io/api/transactions/webhooks'
+      callback_url: 'https://22cc-2a02-2e02-3a30-5800-5144-28ed-d6ae-9bc2.eu.ngrok.io/api/transactions/webhooks'
     });
 
     return charge;
