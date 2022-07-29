@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 
 const TransactionSchema = new mongoose.Schema({
-  receiver: { // destinatario del pago
+  receiverId: { // destinatario del pago
     type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: true
+  },
+  receiverUsername: { // username del user
+    Type: String
   },
   paymentId: { // id del pago creado con opennode
     type: String 

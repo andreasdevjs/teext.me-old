@@ -1,7 +1,7 @@
 module.exports = Object.freeze({
   // Config and others
   MINIMUM_SATOSHIS: 1000,
-  WEBHOOK_CALLBACK_URL: "https://22cc-2a02-2e02-3a30-5800-5144-28ed-d6ae-9bc2.eu.ngrok.io/api/transactions/webhooks",
+  WEBHOOK_CALLBACK_URL: "https://e770-2a02-2e02-3a30-5800-ec21-852e-2c6b-2fd3.eu.ngrok.io/api/transactions/webhooks",
   DEFAULT_JWT_EXPIRATION: '30 days',
 
   // Success and error messages

@@ -6,6 +6,7 @@ const User = require('../../models/User');
 const Transaction = require('../../models/Transactions');
 
 const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND } = require('../../config/constants');
+const sendEmail = require('../../functions/sendEmail');
 
 
 // @route    POST api/transactions
@@ -18,6 +19,7 @@ router.post('/', async (req, res) => {
 
     // Paso 1: compruebo si hay un user con ese username, si hay, obtengo el ID
     const user = await User.findOne({ username: username });
+    console.log(user);
 
     if (!user) {
       return res.status(400).json({ msg: NO_USERNAME_FOUND });
@@ -26,7 +28,8 @@ router.post('/', async (req, res) => {
     const { id, lightning_invoice: { payreq }, status, amount, fiat_value, uri } = await createCharge(user.satoshisPerMessage);
 
     const newTransaction = new Transaction({
-      receiver: user._id,
+      receiverId: user._id,
+      receiverUsername: username,
       paymentId: id,
       paymentUrl: payreq,
       message: message,
@@ -39,7 +42,7 @@ router.post('/', async (req, res) => {
 
     const transaction = await newTransaction.save();
 
-    res.json(transaction);
+    res.status(200).json({ status: 200, data: { transaction } });
 
   } catch (err) {
     console.error(err.message);
@@ -97,6 +100,8 @@ router.post('/webhooks', async (req, res) => {
 
   // En este punto la transacción está actualizada y pagada, habría que mandarla a la cola de procesamiento
   
+  //1. enviarACola(transactionUpdated);
+  sendEmail('andreasdevjs@gmail.com' ,transactionUpdated.message);
 
 });
 
