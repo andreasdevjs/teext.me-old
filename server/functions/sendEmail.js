@@ -16,7 +16,7 @@ async function sendEmail(recipient, message) {
   let emailInfo = await transporter.sendMail({
     from: '[NEW MESSAGE] | Teext.me <support@teext.me>', 
     to: recipient,
-    subject:  '👋 Bienvenido a Pigik',
+    subject:  'You have a new message',
     html: `<p>${message}</p>`
   });
 
