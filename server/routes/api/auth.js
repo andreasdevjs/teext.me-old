@@ -2,9 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const secret = '928293939393';
 
 const User = require('../../models/User');
+
+const { USER_NOT_FOUND, INVALID_CREDENTIALS, DEFAULT_JWT_EXPIRATION } = require('../../config/constants');
 
 
 // @route    POST api/auth
@@ -18,13 +19,13 @@ router.post('/', async (req, res) => {
       let user = await User.findOne({ email });
 
       if (!user) {
-        return res.status(404).json({ status: 404, error: { msg: 'User not found' } });
+        return res.status(404).json({ status: 404, error: { msg: USER_NOT_FOUND } });
       }
 
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
-        return res.status(400).json({ status: 400, error: { msg: 'Invalid Credentials' } });
+        return res.status(400).json({ status: 400, error: { msg: INVALID_CREDENTIALS } });
       }
 
       const payload = {
@@ -33,7 +34,7 @@ router.post('/', async (req, res) => {
         }
       };
 
-      jwt.sign(payload, secret, { expiresIn: '30 days' }, (err, token) => {
+      jwt.sign(payload, process.env.BCRYPTJS_SECRET, { expiresIn: DEFAULT_JWT_EXPIRATION }, (err, token) => {
         if (err) throw err;
         res.status(200).json({ status: 200, data: { token } });
       });

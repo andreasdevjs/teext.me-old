@@ -2,14 +2,7 @@ const express = require('express');
 const router = express.Router();
 const opennode = require('opennode');
 
-const productionKey = '11bd176e-c07e-4d4c-8499-b85d66389757';
-const developmentKey = '9af3ea86-ff5a-482a-b5c9-a4889bd62bb7';
-
-opennode.setCredentials(productionKey, 'live'); //if no parameter given, default environment is 'live';
-
-router.get('/', async (req, res) => {
-  res.json('Get payments');
-});
+opennode.setCredentials(process.env.OPENNODE_PRODUCTION_KEY, 'live');
 
 
 // @route    POST api/payments
@@ -30,6 +23,7 @@ router.post('/', async (req, res) => {
     console.error(`${error.status} | ${error.message}`);
   }
 });
+
 
 router.post('/webhooks', async (req, res) => {
   console.log(req);

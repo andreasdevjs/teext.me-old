@@ -5,6 +5,8 @@ const createCharge = require('../../functions/createCharge');
 const User = require('../../models/User');
 const Transaction = require('../../models/Transactions');
 
+const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND } = require('../../config/constants');
+
 
 // @route    POST api/transactions
 // @desc     Create a transaction
@@ -18,7 +20,7 @@ router.post('/', async (req, res) => {
     const user = await User.findOne({ username: username });
 
     if (!user) {
-      return res.status(400).json({ msg: 'Sorry, there is no user with this username' });
+      return res.status(400).json({ msg: NO_USERNAME_FOUND });
     }
 
     const { id, lightning_invoice: { payreq }, status, amount, fiat_value, uri } = await createCharge(user.satoshisPerMessage);
@@ -41,7 +43,7 @@ router.post('/', async (req, res) => {
 
   } catch (err) {
     console.error(err.message);
-    res.status(500).send('Server Error');
+    res.status(500).send(SERVER_ERROR);
   }
 
   // Paso 3: Se coge el mensaje enviado por el usuario
@@ -68,7 +70,7 @@ router.get('/:transactionId', async (req, res) => {
     if (transaction) {
       res.status(200).json({ status: 200, data: { transaction } });
     } else {
-      throw new Error('Transaction not found');
+      throw new Error(TRANSACTION_NOT_FOUND);
     }
 
   } catch (err) {
