@@ -5,7 +5,7 @@ const createCharge = require('../../functions/createCharge');
 const User = require('../../models/User');
 const Transaction = require('../../models/Transactions');
 
-const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND } = require('../../config/constants');
+const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS } = require('../../config/constants');
 const sendEmail = require('../../functions/sendEmail');
 
 
@@ -19,7 +19,6 @@ router.post('/', async (req, res) => {
 
     // Paso 1: compruebo si hay un user con ese username, si hay, obtengo el ID
     const user = await User.findOne({ username: username });
-    console.log(user);
 
     if (!user) {
       return res.status(400).json({ msg: NO_USERNAME_FOUND });
@@ -29,7 +28,7 @@ router.post('/', async (req, res) => {
 
     const newTransaction = new Transaction({
       receiverId: user._id,
-      receiverUsername: username,
+      receiverUsername: user.username,
       paymentId: id,
       paymentUrl: payreq,
       message: message,
@@ -92,6 +91,8 @@ router.post('/webhooks', async (req, res) => {
   // Obtenemos el ID y estado de la transacción
   const { id, status } = req.body;
 
+  if(status !== PAID_STATUS) return;
+
   const filter = { paymentId: id };
   const update = { paid: status };
 
@@ -101,6 +102,7 @@ router.post('/webhooks', async (req, res) => {
   // En este punto la transacción está actualizada y pagada, habría que mandarla a la cola de procesamiento
   
   //1. enviarACola(transactionUpdated);
+  // coger el username y buscar el user.email
   sendEmail('andreasdevjs@gmail.com' ,transactionUpdated.message);
 
 });
