@@ -1,7 +1,7 @@
 module.exports = Object.freeze({
   // Config and others
   MINIMUM_SATOSHIS: 1000,
-  WEBHOOK_CALLBACK_URL: "https://4bd9-2a02-2e02-3a30-5800-ec21-852e-2c6b-2fd3.eu.ngrok.io/api/transactions/webhooks",
+  WEBHOOK_CALLBACK_URL: "https://6a0c-2a02-2e02-3a30-5800-2147-6f16-8aba-96d7.eu.ngrok.io/api/transactions/webhooks",
   DEFAULT_JWT_EXPIRATION: '30 days',
 
   // Success and error messages
@@ -10,6 +10,7 @@ module.exports = Object.freeze({
   USER_NOT_FOUND: "User not found",
   NO_USERNAME_FOUND: "Sorry, there is no user with this username",
   INVALID_CREDENTIALS: "Invalid credentials",
+  FORBIDDEN: 'Forbidden',
 
   // Status
   PAID_STATUS: "paid"
