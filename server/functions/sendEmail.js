@@ -21,6 +21,8 @@ async function sendEmail(recipient, message) {
   });
 
   console.log("Email sent: %s", emailInfo.messageId);
+
+  return emailInfo;
 }
 
 module.exports = sendEmail;

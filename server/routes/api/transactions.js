@@ -22,8 +22,19 @@ redis.connect(() => {
 const myQueue = new Queue('transactionQueue', { connection: redis });
 
 const myWorker = new Worker('transactionQueue', async (job) => {
-  console.log(job.data);
+  if (job.name === 'email') {
+    const pepe = await sendEmail('andreasdevjs@gmail.com', job.data.message);
+    return pepe;
+  }
 }, { connection: redis });
+
+myWorker.on('completed', job => {
+  console.log(`${job.id} has completed!`);
+});
+
+myWorker.on('failed', (job, err) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+});
 
 
 // @route    POST api/transactions
@@ -121,7 +132,8 @@ router.post('/webhooks', async (req, res) => {
 
       //1. enviarACola(transactionUpdated);
       // coger el username y buscar el user.email
-      sendEmail('andreasdevjs@gmail.com' ,transactionUpdated.message);
+
+      await myQueue.add('email', { message: transactionUpdated.message });
 
       // Enviamos respuesta a opennode para que no lo envíen más
       res.status(200).json({ status: 200, data: { success: 'OK' } });
@@ -140,11 +152,8 @@ router.post('/webhooks', async (req, res) => {
 
 
 router.get('/prueba/cola', async (req, res) => {
-
-  await myQueue.add('paint', { colour: 'sin delay' });
-  
+  await myQueue.add('email', { colour: 'sin delay5' });
   res.json({ queued: true });
-
 });
 
 
