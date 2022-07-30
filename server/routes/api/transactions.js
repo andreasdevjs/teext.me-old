@@ -2,12 +2,28 @@ const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
 
+const { Queue, Worker } = require('bullmq');
+const IORedis = require('ioredis');
+
 const createCharge = require('../../functions/createCharge');
 const User = require('../../models/User');
 const Transaction = require('../../models/Transactions');
 
 const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS, FORBIDDEN } = require('../../config/constants');
+
 const sendEmail = require('../../functions/sendEmail');
+
+// Instanciamos redis con la url completa
+const redis = new IORedis(process.env.REDIS_URL, { maxRetriesPerRequest: null });
+redis.connect(() => {
+  console.log('Redis connected');
+});
+
+const myQueue = new Queue('transactionQueue', { connection: redis });
+
+const myWorker = new Worker('transactionQueue', async (job) => {
+  console.log(job.data);
+}, { connection: redis });
 
 
 // @route    POST api/transactions
@@ -118,6 +134,16 @@ router.post('/webhooks', async (req, res) => {
   } else {
     res.status(403).json({ status: 403, error: { msg: FORBIDDEN } });
   }
+
+});
+
+
+
+router.get('/prueba/cola', async (req, res) => {
+
+  await myQueue.add('paint', { colour: 'sin delay' });
+  
+  res.json({ queued: true });
 
 });
 
