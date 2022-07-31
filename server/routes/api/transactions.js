@@ -11,30 +11,32 @@ const Transaction = require('../../models/Transactions');
 
 const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS, FORBIDDEN } = require('../../config/constants');
 
-const sendEmail = require('../../functions/sendEmail');
+const sendMessageAndFunds = require('../../functions/sendMessageAndFunds');
 
-// Instanciamos redis con la url completa
+
+/****************/
 const redis = new IORedis(process.env.REDIS_URL, { maxRetriesPerRequest: null });
 redis.connect(() => {
   console.log('Redis connected');
 });
 
-const myQueue = new Queue('transactionQueue', { connection: redis });
+const transactionQueue = new Queue('transactionQueue', { connection: redis });
 
-const myWorker = new Worker('transactionQueue', async (job) => {
-  if (job.name === 'email') {
-    const pepe = await sendEmail('andreasdevjs@gmail.com', job.data.message);
-    return pepe;
+const transactionWoker = new Worker('transactionQueue', async (job) => {
+  if (job.name === 'transaction') {
+    const data = await sendMessageAndFunds(job.data);
+    return data;
   }
 }, { connection: redis });
 
-myWorker.on('completed', job => {
+transactionWoker.on('completed', job => {
   console.log(`${job.id} has completed!`);
 });
 
-myWorker.on('failed', (job, err) => {
+transactionWoker.on('failed', (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
 });
+/****************/
 
 
 // @route    POST api/transactions
@@ -57,6 +59,7 @@ router.post('/', async (req, res) => {
     const newTransaction = new Transaction({
       receiverId: user._id,
       receiverUsername: user.username,
+      receiverEmail: user.email,
       paymentId: id,
       paymentUrl: payreq,
       message: message,
@@ -69,20 +72,13 @@ router.post('/', async (req, res) => {
 
     const transaction = await newTransaction.save();
 
+    // TODO: eliminar de la respuesta ciertos campos como email.. solo lo necesario para el pago por seguridad
     res.status(200).json({ status: 200, data: { transaction } });
 
   } catch (err) {
     console.error(err.message);
     res.status(500).send(SERVER_ERROR);
   }
-
-  // Paso 3: Se coge el mensaje enviado por el usuario
-
-  // Paso 4: Se pone en estado unpaid
-
-  // Paso 5: se crea una nueva instancia de transaction.
-
-  // Paso 6: se envía al cliente un json con la url de pago para que pueda pagar
 
 });
 
@@ -121,19 +117,25 @@ router.post('/webhooks', async (req, res) => {
   if(status !== PAID_STATUS) return;
 
   if (hashed_order === calculated) {
-    // La petición de Opennode es válida
 
     const filter = { paymentId: id };
     const update = { paid: status };
 
     try {
+
+      // Update the transaction status to paid
       let transactionUpdated = await Transaction.findOneAndUpdate(filter, update);
       await transactionUpdated.save();
 
-      //1. enviarACola(transactionUpdated);
-      // coger el username y buscar el user.email
+      // Setup data for queue
+      const transactionQueueData = {
+        receiverId: transactionUpdated.receiverId,
+        receiverUsername: transactionUpdated.receiverUsername,
+        receiverEmail: transactionUpdated.receiverEmail,
+        message: transactionUpdated.message
+      }
 
-      await myQueue.add('email', { message: transactionUpdated.message });
+      await transactionQueue.add('transaction', { transactionQueueData });
 
       // Enviamos respuesta a opennode para que no lo envíen más
       res.status(200).json({ status: 200, data: { success: 'OK' } });
@@ -150,9 +152,19 @@ router.post('/webhooks', async (req, res) => {
 });
 
 
+// TODO: webhook para los LNURLS que se canjean
 
+// @route    POST api/transactions/test/queue
+// @desc     Test route for the Queue
+// @access   Public
 router.get('/prueba/cola', async (req, res) => {
-  await myQueue.add('email', { colour: 'sin delay5' });
+  const transactionQueueData = {
+    receiverId: '62e035d6df58f9027177fcae',
+    receiverUsername: 'andreasdevjs@gmail.com',
+    receiverEmail: 'andreasdevjs@gmail.com',
+    message: 'Hola'
+  }
+  await transactionQueue.add('transaction', { transactionQueueData });
   res.json({ queued: true });
 });
 

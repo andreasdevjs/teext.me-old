@@ -7,7 +7,10 @@ const TransactionSchema = new mongoose.Schema({
     required: true
   },
   receiverUsername: { // username del user
-    Type: String
+    type: String
+  },
+  receiverEmail: { // email del user
+    type: String
   },
   paymentId: { // id del pago creado con opennode
     type: String 
