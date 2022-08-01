@@ -9,7 +9,7 @@ const createCharge = require('../../functions/createCharge');
 const User = require('../../models/User');
 const Transaction = require('../../models/Transactions');
 
-const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS, FORBIDDEN } = require('../../config/constants');
+const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS, CONFIRMED_STATUS, FORBIDDEN } = require('../../config/constants');
 
 const sendMessageAndFunds = require('../../functions/sendMessageAndFunds');
 
@@ -106,10 +106,10 @@ router.get('/:transactionId', async (req, res) => {
 });
 
 
-// @route    POST api/transactions/webhooks
+// @route    POST api/transactions/transactions-webhook
 // @desc     Webhook for transactions from Opennode
 // @access   Public
-router.post('/webhooks', async (req, res) => {
+router.post('/transactions-webhook', async (req, res) => {
 
   const { id, status, hashed_order } = req.body;
   const calculated = crypto.createHmac('sha256', process.env.OPENNODE_PRODUCTION_KEY).update(id).digest('hex');
@@ -152,7 +152,49 @@ router.post('/webhooks', async (req, res) => {
 });
 
 
-// TODO: webhook para los LNURLS que se canjean
+// @route    POST api/transactions/withdrawal-webhook
+// @desc     Webhook for LNURL withdrawal from Opennode
+// @access   Public
+router.post('/withdrawal-webhook', async (req, res) => {
+
+  const { id, status, hashed_order } = req.body;
+
+  if(status !== CONFIRMED_STATUS) return;
+
+  const calculated = crypto.createHmac('sha256', process.env.OPENNODE_PRODUCTION_KEY).update(id).digest('hex');
+
+  if (hashed_order === calculated) {
+
+    try {
+
+      // TODO: Modificar esto.. crear una nueva clase payments y asociarlo al user que sea con el object ID
+      let user = await Transaction.findOneAndUpdate(filter, update);
+      await transactionUpdated.save();
+
+      // Setup data for queue
+      const transactionQueueData = {
+        receiverId: transactionUpdated.receiverId,
+        receiverUsername: transactionUpdated.receiverUsername,
+        receiverEmail: transactionUpdated.receiverEmail,
+        message: transactionUpdated.message
+      }
+
+      await transactionQueue.add('transaction', { transactionQueueData });
+
+      // Enviamos respuesta a opennode para que no lo envíen más
+      res.status(200).json({ status: 200, data: { success: 'OK' } });
+
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).json({ status: 500, error: { msg: err.message } });
+    }
+
+  } else {
+    res.status(403).json({ status: 403, error: { msg: FORBIDDEN } });
+  }
+
+});
+
 
 // @route    POST api/transactions/test/queue
 // @desc     Test route for the Queue

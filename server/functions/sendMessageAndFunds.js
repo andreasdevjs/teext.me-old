@@ -6,7 +6,6 @@ const User = require('../models/User');
 opennode.setCredentials(process.env.OPENNODE_PRODUCTION_KEY, 'live');
 
 module.exports = async function(data) {
-  console.log(data.transactionQueueData);
 
   const { receiverId, receiverUsername, receiverEmail, message } = data.transactionQueueData;
 
@@ -19,7 +18,7 @@ module.exports = async function(data) {
     const lnurl = await opennode.createLnUrlWithdrawal({ 
       min_amt: 500,
       max_amt: 500,
-      callback_url: 'https://andreas.free.beeceptor.com',
+      callback_url: 'https://fe7c-2a02-2e02-3a30-5800-189f-e168-b45-9be4.eu.ngrok.io/api/transactions/withdrawal-webhook',
       description: 'New Message'
     });
   

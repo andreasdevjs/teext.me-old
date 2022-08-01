@@ -1,7 +1,8 @@
 module.exports = Object.freeze({
   // Config and others
   MINIMUM_SATOSHIS: 1000,
-  WEBHOOK_CALLBACK_URL: "https://c84d-2a02-2e02-3a30-5800-b03d-52dd-add9-df25.eu.ngrok.io/api/transactions/webhooks",
+  TRANSACTION_WEBHOOK_CALLBACK_URL: "https://fe7c-2a02-2e02-3a30-5800-189f-e168-b45-9be4.eu.ngrok.io/api/transactions/transactions-webhook",
+  WITHDRAWAL_WEBHOOK_CALLBACK_URL: "https://fe7c-2a02-2e02-3a30-5800-189f-e168-b45-9be4.eu.ngrok.io/api/transactions/withdrawal-webhook",
   DEFAULT_JWT_EXPIRATION: '30 days',
 
   // Success and error messages
@@ -13,5 +14,6 @@ module.exports = Object.freeze({
   FORBIDDEN: 'Forbidden',
 
   // Status
-  PAID_STATUS: "paid"
+  PAID_STATUS: "paid",
+  CONFIRMED_STATUS: "confirmed"
 });
