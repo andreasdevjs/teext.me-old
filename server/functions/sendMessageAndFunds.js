@@ -1,13 +1,15 @@
 const opennode = require('opennode');
 const sendEmail = require('./sendEmail');
 
-const User = require('../models/User');
+const Payment = require('../models/Payments');
+
+const { WITHDRAWAL_WEBHOOK_CALLBACK_URL } = require('../config/constants');
 
 opennode.setCredentials(process.env.OPENNODE_PRODUCTION_KEY, 'live');
 
 module.exports = async function(data) {
 
-  const { receiverId, receiverUsername, receiverEmail, message } = data.transactionQueueData;
+  const { receiverId, receiverEmail, message, amount } = data.transactionQueueData;
 
   try {
 
@@ -16,20 +18,25 @@ module.exports = async function(data) {
 
     // 2º Create the LNURL QR for the withdrawal
     const lnurl = await opennode.createLnUrlWithdrawal({ 
-      min_amt: 500,
-      max_amt: 500,
-      callback_url: 'https://fe7c-2a02-2e02-3a30-5800-189f-e168-b45-9be4.eu.ngrok.io/api/transactions/withdrawal-webhook',
-      description: 'New Message'
+      min_amt: Number(amount - (amount / 10)),
+      max_amt: Number(amount - (amount / 10)),
+      callback_url: WITHDRAWAL_WEBHOOK_CALLBACK_URL,
+      description: '[NEW MESSAGE SENT]'
     });
-  
-    // 3º Insert the LNURL to the user
-    const user = await User.findOneAndUpdate(
-      { "_id" : receiverId },
-      { $push: { "payments" : { used: lnurl.used, lnurlQR: `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(lnurl.lnurl)}&size=[500]x[500]`, amount: lnurl.max_amt }}},
-      { safe: true, upsert: true, new: true}
-    );
 
-    return user;
+    // 3º Creamos un nuevo PAYMENT y lo asociamos al user (ref type)
+    const newPayment = new Payment({
+      receiverId: receiverId,
+      opennodePaymentId: lnurl.id,
+      used: lnurl.used,
+      lnurlQR: `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(lnurl.lnurl)}&size=[500]x[500]`,
+      lnurl: lnurl.lnurl,
+      amount: lnurl.max_amt
+    });
+
+    await newPayment.save();
+
+    return newPayment;
 
   } catch (error) {
     console.error(`${error.status} | ${error.message}`);

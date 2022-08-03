@@ -6,10 +6,12 @@ const { Queue, Worker } = require('bullmq');
 const IORedis = require('ioredis');
 
 const createCharge = require('../../functions/createCharge');
+
 const User = require('../../models/User');
 const Transaction = require('../../models/Transactions');
+const Payment = require('../../models/Payments');
 
-const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS, CONFIRMED_STATUS, FORBIDDEN } = require('../../config/constants');
+const { TRANSACTION_NOT_FOUND, SERVER_ERROR, NO_USERNAME_FOUND, PAID_STATUS, CONFIRMED_STATUS, COMPLETE_STATUS, FORBIDDEN } = require('../../config/constants');
 
 const sendMessageAndFunds = require('../../functions/sendMessageAndFunds');
 
@@ -72,8 +74,18 @@ router.post('/', async (req, res) => {
 
     const transaction = await newTransaction.save();
 
-    // TODO: eliminar de la respuesta ciertos campos como email.. solo lo necesario para el pago por seguridad
-    res.status(200).json({ status: 200, data: { transaction } });
+    res.status(200).json({ status: 200, data: { transaction: {
+      receiverId: user._id,
+      receiverUsername: user.username,
+      paymentId: id,
+      paymentUrl: payreq,
+      message: message,
+      paid: status,
+      amount: amount,
+      fiatValue: fiat_value,
+      uri: uri,
+      qrImageUrl: `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURI(uri)}&size=[500]x[500]`
+    } } });
 
   } catch (err) {
     console.error(err.message);
@@ -132,7 +144,8 @@ router.post('/transactions-webhook', async (req, res) => {
         receiverId: transactionUpdated.receiverId,
         receiverUsername: transactionUpdated.receiverUsername,
         receiverEmail: transactionUpdated.receiverEmail,
-        message: transactionUpdated.message
+        message: transactionUpdated.message,
+        amount: transactionUpdated.amount
       }
 
       await transactionQueue.add('transaction', { transactionQueueData });
@@ -157,33 +170,25 @@ router.post('/transactions-webhook', async (req, res) => {
 // @access   Public
 router.post('/withdrawal-webhook', async (req, res) => {
 
-  const { id, status, hashed_order } = req.body;
-
-  if(status !== CONFIRMED_STATUS) return;
+  const { id, status, hashed_order, lnurl_withdrawal } = req.body;
+  
+  if(!(status == CONFIRMED_STATUS || status == COMPLETE_STATUS)) return;
 
   const calculated = crypto.createHmac('sha256', process.env.OPENNODE_PRODUCTION_KEY).update(id).digest('hex');
 
   if (hashed_order === calculated) {
 
+    const withdrawalJson = JSON.parse(lnurl_withdrawal);
+    const withdrawalId = withdrawalJson.id;
+
+    const filter = { opennodePaymentId: withdrawalId };
+    const update = { used: status };
+    
     try {
+      let paymentUpdated = await Payment.findOneAndUpdate(filter, update);
+      await paymentUpdated.save();
 
-      // TODO: Modificar esto.. crear una nueva clase payments y asociarlo al user que sea con el object ID
-      let user = await Transaction.findOneAndUpdate(filter, update);
-      await transactionUpdated.save();
-
-      // Setup data for queue
-      const transactionQueueData = {
-        receiverId: transactionUpdated.receiverId,
-        receiverUsername: transactionUpdated.receiverUsername,
-        receiverEmail: transactionUpdated.receiverEmail,
-        message: transactionUpdated.message
-      }
-
-      await transactionQueue.add('transaction', { transactionQueueData });
-
-      // Enviamos respuesta a opennode para que no lo envíen más
       res.status(200).json({ status: 200, data: { success: 'OK' } });
-
     } catch (err) {
       console.error(err.message);
       res.status(500).json({ status: 500, error: { msg: err.message } });

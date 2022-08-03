@@ -38,12 +38,7 @@ const UserSchema = new mongoose.Schema({
   },
   location: {
     type: String
-  },
-  payments: [{ 
-    used: Boolean, 
-    lnurlQR: String,
-    amount: Number
-  }]
+  }
 });
 
 module.exports = mongoose.model('user', UserSchema);
