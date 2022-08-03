@@ -32,6 +32,7 @@ app.use('/api/users', require('./routes/api/users'));
 app.use('/api/transactions', require('./routes/api/transactions'));
 app.use('/api/auth', require('./routes/api/auth'));
 app.use('/api/rates', require('./routes/api/rates'));
+app.use('/api/payments', require('./routes/api/payments'));
 
 // Serving react on routes unused by previous routing
 app.get('*', (req, res) => {
