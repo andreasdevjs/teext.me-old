@@ -3,7 +3,7 @@ import { Box, Button, Text, Image, Modal, ModalOverlay, ModalContent, ModalHeade
 
 const Overlay = () => ( <ModalOverlay bg='blackAlpha.300' backdropFilter='blur(10px) hue-rotate(90deg)'/>);
 
-const paymentDone = false;
+const paymentDone = true;
 
 const Timer = (props) => {
   const { initialMinute = 0, initialSeconds = 0 } = props;
@@ -42,7 +42,7 @@ const Timer = (props) => {
 
 function MessageQRModal() {
   return (
-    <Modal isCentered size={'md'} isOpen={true}>
+    <Modal isCentered size={'md'} isOpen={false}>
       <Overlay />
       <ModalContent margin={'20px'}>
 

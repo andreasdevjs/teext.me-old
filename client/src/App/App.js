@@ -10,6 +10,7 @@ import Username from './Pages/Username/Username';
 import FAQ from './Pages/FAQ/FAQ';
 import HowItWorks from './Pages/HowItWorks/HowItWorks';
 import Account from './Pages/Account/Account';
+import LightningNetwork from './Pages/LightningNetwork/LightningNetwork';
 
 // Components
 import Menu from './Components/Menu/Menu';
@@ -34,6 +35,7 @@ function App() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/account" element={<Account />} /> 
+          <Route path="/lightning-network" element={<LightningNetwork />} /> 
           <Route path="/:username" element={<Username />} /> 
         </Routes>
       </Router>
